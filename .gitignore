@@ -1,0 +1,8 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/Testautomationproj1/v15
+/packages
+/Testautomationproj1/bin/Debug
+/Testautomationproj1/obj/Debug
