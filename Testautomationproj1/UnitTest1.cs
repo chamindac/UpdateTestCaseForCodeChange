@@ -9,6 +9,10 @@ namespace Testautomationproj1
     [TestClass]
     public class UnitTest1
     {
+        /// <summary>
+        /// Summary description for 
+        /// TestMethod1
+        /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "22368")]
         [TestProperty("TestcaseDescription", "Some description here")]
