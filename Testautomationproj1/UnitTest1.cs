@@ -12,13 +12,17 @@ namespace Testautomationproj1
     [TestClass]
     public class UnitTest1
     {
+        private const string TestGroup = "Menu-Integration";
+
         /// <summary>
         /// Summary description for 
         /// TestMethod1
         /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "22368")]
-        [TestProperty("TestcaseDescription", "Some description here")]
+        [TestCategory(TestHelpers.TestCategories.ApplicationVersion.V0404)]
+        [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
+        [TestCategory(TestHelpers.TestCategories.TestRun.Weekly)]
         public void TestMethod1()
         {
             ChromeOptions option = new ChromeOptions();
