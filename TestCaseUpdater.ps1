@@ -1,7 +1,7 @@
 $folderPath = $env:TestAssemblyPath;
 $testAssemblyFilter = $env:TestAssemblyFilePattern;
 
-$testAssemblies = (Get-ChildItem -Path $path -Recurse -Filter $testAssemblyFilter).FullName
+$testAssemblies = (Get-ChildItem -Path $folderPath -Recurse -Filter $testAssemblyFilter).FullName
 
 foreach($testAssembly in $testAssemblies)
 {
