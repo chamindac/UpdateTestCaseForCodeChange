@@ -19,7 +19,7 @@ namespace Testautomationproj1
         /// TestMethod1
         /// </summary>
         [TestMethod]
-        [TestProperty("TestcaseID", "22368")]
+        [TestProperty("TestcaseID", "1072")]
         [TestCategory(TestHelpers.TestCategories.ApplicationVersion.V0404)]
         [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
         [TestCategory(TestHelpers.TestCategories.TestRun.Weekly)]
@@ -45,7 +45,7 @@ namespace Testautomationproj1
         /// TestMethod2
         /// </summary>
         [TestMethod]
-        [TestProperty("TestcaseID", "22368")]
+        [TestProperty("TestcaseID", "1073")]
         [TestProperty("TestcaseDescription", "Some description here")]
         public void TestMethod2()
         {

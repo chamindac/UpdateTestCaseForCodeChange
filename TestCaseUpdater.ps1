@@ -1,5 +1,17 @@
 $folderPath = $env:TestAssemblyPath;
 $testAssemblyFilter = $env:TestAssemblyFilePattern;
+$apiVersion = $env:RestApiVersion
+
+$pat = $env:SYSTEM_ACCESSTOKEN
+$baseDevOpsUrl = $env:SYSTEM_TEAMFOUNDATIONCOLLECTIONURI
+$teamProject = $env:SYSTEM_TEAMPROJECT
+
+$User=""
+
+# Base64-encodes the Personal Access Token (PAT) appropriately
+$base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $User,$pat)));
+$header = @{Authorization=("Basic {0}" -f $base64AuthInfo)};
+
 
 $testAssemblies = (Get-ChildItem -Path $folderPath -Recurse -Filter $testAssemblyFilter).FullName
 
@@ -34,6 +46,15 @@ foreach($testAssembly in $testAssemblies)
                 {
                     $testCaseId = $method.CustomAttributes.Where({$_.AttributeType.Name -eq "TestPropertyAttribute"}).ConstructorArguments[1].Value
                     Write-Host ("TestcaseID:" + $testCaseId + " is found for Test Method: " + $method.Name)
+
+                    $Uri = $baseDevOpsUrl + $teamProject +'/_apis/wit/workitems/' + $testCaseId + '?fields=System.Description,System.Tags&api-version=' + $apiVersion
+                    $testCase = Invoke-RestMethod -Method Get -ContentType application/json -Uri $Uri -Headers $header
+
+                    $testcaseTags = $testCase.fields.'System.Tags';
+                    $testcaseDescription = $testCase.fields.'System.Description'
+
+                    Write-Host ("Test case description: {0}" -f $testcaseDescription)
+                    Write-Host ("Test case tags: {0}" -f $testcaseTags)
 
                     # Find any test category attributes if any
                     if ($method.CustomAttributes.AttributeType.Name.Contains("TestCategoryAttribute"))
