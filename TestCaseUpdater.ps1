@@ -185,6 +185,7 @@ foreach($testAssembly in $testAssemblies)
                     Write-Warning ("Test Method: " + $method.Name + " has not been defined with Test Property Attribute TestcaseID")
                 }
             }
+            Write-Host ("==================================================================")
         }
         Write-Host ("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     }
