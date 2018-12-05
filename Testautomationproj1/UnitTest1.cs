@@ -18,7 +18,7 @@ namespace Testautomationproj1
         /// Summary description for 
         /// TestMethod1
         ///     This method is doing important work
-        ///     for test method 02
+        ///     for test method 01
         /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "1072")]
@@ -50,7 +50,7 @@ namespace Testautomationproj1
         /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "1073")]
-        [TestCategory(TestHelpers.TestCategories.TestRun.AdHoc)]
+        [TestCategory(TestHelpers.TestCategories.TestRun.Daily)]
         [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
         public void TestMethod2()
         {
