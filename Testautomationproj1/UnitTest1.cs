@@ -17,12 +17,14 @@ namespace Testautomationproj1
         /// <summary>
         /// Summary description for 
         /// TestMethod1
+        ///     This method is doing important work
+        ///     for test method 02
         /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "1072")]
         [TestCategory(TestHelpers.TestCategories.ApplicationVersion.V0404)]
         [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
-        [TestCategory(TestHelpers.TestCategories.TestRun.Weekly)]
+        [TestCategory(TestHelpers.TestCategories.TestRun.Daily)]
         public void TestMethod1()
         {
             ChromeOptions option = new ChromeOptions();
@@ -41,12 +43,14 @@ namespace Testautomationproj1
         }
 
         /// <summary>
-        /// Summary description for 
+        /// New Summary description for 
         /// TestMethod2
+        ///     something Important will happen in this 
+        ///     test method02
         /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "1073")]
-        [TestProperty("TestcaseDescription", "Some description here")]
+        [TestCategory(TestHelpers.TestCategories.TestRun.Weekly)]
         public void TestMethod2()
         {
             ChromeOptions option = new ChromeOptions();

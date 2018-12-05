@@ -1,5 +1,6 @@
 $folderPath = $env:TestAssemblyPath;
 $testAssemblyFilter = $env:TestAssemblyFilePattern;
+$testCategoryTagPrefix = $env:TestCategoryTagPrefix;
 $apiVersion = $env:RestApiVersion
 
 $pat = $env:SYSTEM_ACCESSTOKEN
@@ -19,7 +20,7 @@ foreach($testAssembly in $testAssemblies)
 {
     Write-Host ("******************************************************************")
     Write-Host ("Test assembly found: " + $testAssembly)
-    Write-Host ("------------------------------------------------------------------")
+    Write-Host ("******************************************************************")
 
     $asm = [System.Reflection.Assembly]::LoadFrom($testAssembly)
 
@@ -30,7 +31,8 @@ foreach($testAssembly in $testAssemblies)
     foreach($class in $classes)
     {
         Write-Host ("Inspecting class: " + $class.Name)
-        Write-Host ("------------------------------------------------------------------")
+        Write-Host ("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
+        
         
         $methods = $class.GetMethods()
 
@@ -53,8 +55,35 @@ foreach($testAssembly in $testAssemblies)
                     $testcaseTags = $testCase.fields.'System.Tags';
                     $testcaseDescription = $testCase.fields.'System.Description'
 
+                    [System.Collections.ArrayList]$testcaseTagArray=@();
+                    if(-not ([System.String]::IsNullOrWhiteSpace($testcaseTags)))
+                    {
+                        $testcaseTagArray = $testcaseTags.Split("; ",[System.StringSplitOptions]::RemoveEmptyEntries)
+                    }
+
                     Write-Host ("Test case description: {0}" -f $testcaseDescription)
+                    $needUpdateToSummary= $false;
+
+                    # Find the summary descriptions from docs
+                    if ($assemblyDocument.doc.members.ChildNodes.Name.Contains(('M:' + $method.DeclaringType.FullName + "." + $method.Name)))
+                    {
+                       $testCaseSummary = $assemblyDocument.doc.members.ChildNodes.Where({$_.Name -eq ('M:' + $method.DeclaringType.FullName + "." + $method.Name)}).Summary
+
+                       Write-Host ("Found Test Case Summary: " + $testCaseSummary + ". Processing...")
+                      
+                        $testCaseSummary = ($testCaseSummary.Trim() -replace "`r","</br>" -replace "`n","</br>").Trim()
+                        if ($testcaseDescription.Trim() -ne $testCaseSummary)
+                        {
+                            $testcaseDescription = $testCaseSummary;
+                            $needUpdateToSummary= $true;
+                        }
+                        Write-Host ("Test Case Summary is changed marking it for update...")                       
+                    }
+                    Write-Host ("------------------------------------------------------------------")
                     Write-Host ("Test case tags: {0}" -f $testcaseTags)
+
+                    $needUpdateToTags = $false;
+                    [System.Collections.ArrayList]$testCategoriesInCode=@();
 
                     # Find any test category attributes if any
                     if ($method.CustomAttributes.AttributeType.Name.Contains("TestCategoryAttribute"))
@@ -64,15 +93,92 @@ foreach($testAssembly in $testAssemblies)
                        foreach($testCategoryAtribute in $testCategoryAtributes)
                        {
                             $testCategory = $testCategoryAtribute.ConstructorArguments[0];
-                            Write-Host ("Found Test Category: " + $testCategory + ". Adding to tags of test case ...")
-                       }
-                    }
-                    if ($assemblyDocument.doc.members.ChildNodes.Name.Contains(('M:' + $method.DeclaringType.FullName + "." + $method.Name)))
-                    {
-                       $testCaseSummary = $assemblyDocument.doc.members.ChildNodes.Where({$_.Name -eq ('M:' + $method.DeclaringType.FullName + "." + $method.Name)}).Summary
+                            Write-Host ("Found Test Category: " + $testCategory.Value + ". Processing...")
+                            
+                            $tempTestCategoryTag = $testCategoryTagPrefix + $testCategory.Value
 
-                       Write-Host ("Found Test Case Summary: " + $testCaseSummary + ". Updating test case ...")
+                            $testCategoriesInCode.Add($tempTestCategoryTag);
+
+                            if (-not($testcaseTagArray.Contains($tempTestCategoryTag)))
+                            {
+                                $needUpdateToTags = $true;
+                                $testcaseTagArray.Add($tempTestCategoryTag);
+
+                                Write-Host ("Test Category: " + $testCategory + " is new. Marking it to add as tag to the test case...")
+                            }
+                       }
+                    }                    
+
+                    # Filter exisitng test category tags
+                    [System.Collections.ArrayList]$existingTestCategoryTags=@();
+                    if ($testcaseTagArray.Where({$_ -like "$testCategoryTagPrefix*"}).Count -gt 0)
+                    {
+                        $existingTestCategoryTags = $testcaseTagArray.Where({$_ -like "$testCategoryTagPrefix*"})
                     }
+
+                    
+
+                    # Identify test categories to be removed and remove them
+                    foreach($existingTestCategoryTag in $existingTestCategoryTags)
+                    {
+                        if (-not($testCategoriesInCode.Contains($existingTestCategoryTag)))
+                        {
+                            $needUpdateToTags = $true;
+                            $testcaseTagArray.Remove($existingTestCategoryTag);
+
+                            Write-Host ("Test Category for tag: " + $existingTestCategoryTag + " is not found in code. Marking it to be removed from tags of the test case...")
+                        }
+                    }
+                    Write-Host ("------------------------------------------------------------------")
+
+                    $updateJSONBody = '[
+                        {
+                        "op": "test",
+                        "path": "/rev",
+                        "value": '+ $testCase.rev + '
+                        }';
+                              
+                    if ($needUpdateToTags)
+                    {
+                        $testCaseTagsToUpdate='';
+                        foreach($testcaseTagItem in $testcaseTagArray)
+                        {
+                            $testCaseTagsToUpdate = $testCaseTagsToUpdate + '; ' + $testcaseTagItem
+                        }
+                                
+                        $testCaseTagsToUpdate = $testCaseTagsToUpdate.Substring(2);
+
+                        $updateJSONBody = $updateJSONBody + ',
+                            {
+                            "op": "add",
+                            "path": "/fields/System.Tags",
+                            "value": "'+ $testCaseTagsToUpdate + '"
+                            }';
+
+                        Write-Host ("updating test case tags...")
+                    }
+                              
+                    if ($needUpdateToSummary)
+                    {
+                        $updateJSONBody = $updateJSONBody + ',
+                        {
+                        "op": "add",
+                        "path": "/fields/System.Description",
+                        "value": "' + $testcaseDescription + '"
+                        }' ;                           
+                        Write-Host ("updating test case summary...")          
+                    }
+
+                    $updateJSONBody = $updateJSONBody + ']';
+                    if ($needUpdateToTags -or $needUpdateToSummary)
+                    {
+                        $Uri = $baseDevOpsUrl + $teamProject +'/_apis/wit/workitems/' + $testCaseId + '?api-version=' + $apiVersion
+                        $response = Invoke-RestMethod -Method Patch -ContentType application/json-patch+json  -Body $updateJSONBody -Uri $Uri -Headers $header
+                        
+                        Write-Host ("Test case updated successfully")           
+                    }
+
+
                 }
                 else
                 {
@@ -80,6 +186,6 @@ foreach($testAssembly in $testAssemblies)
                 }
             }
         }
-        Write-Host ("------------------------------------------------------------------")
+        Write-Host ("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
     }
 }
