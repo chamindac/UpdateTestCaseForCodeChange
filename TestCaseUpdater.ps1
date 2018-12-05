@@ -174,7 +174,7 @@ foreach($testAssembly in $testAssemblies)
                     if ($needUpdateToTags -or $needUpdateToSummary)
                     {
                         $Uri = $baseDevOpsUrl + $teamProject +'/_apis/wit/workitems/' + $testCaseId + '?api-version=' + $apiVersion
-                        #$response = Invoke-RestMethod -Method Patch -ContentType application/json-patch+json  -Body $updateJSONBody -Uri $Uri -Headers $header
+                        $response = Invoke-RestMethod -Method Patch -ContentType application/json-patch+json  -Body $updateJSONBody -Uri $Uri -Headers $header
                         
                         Write-Host ("Test case updated successfully")           
                     }
