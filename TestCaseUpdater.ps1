@@ -76,8 +76,9 @@ foreach($testAssembly in $testAssemblies)
                         {
                             $testcaseDescription = $testCaseSummary;
                             $needUpdateToSummary= $true;
+                            Write-Host ("Test Case Summary is changed marking it for update...")   
                         }
-                        Write-Host ("Test Case Summary is changed marking it for update...")                       
+                                            
                     }
                     Write-Host ("------------------------------------------------------------------")
                     Write-Host ("Test case tags: {0}" -f $testcaseTags)
@@ -173,7 +174,7 @@ foreach($testAssembly in $testAssemblies)
                     if ($needUpdateToTags -or $needUpdateToSummary)
                     {
                         $Uri = $baseDevOpsUrl + $teamProject +'/_apis/wit/workitems/' + $testCaseId + '?api-version=' + $apiVersion
-                        $response = Invoke-RestMethod -Method Patch -ContentType application/json-patch+json  -Body $updateJSONBody -Uri $Uri -Headers $header
+                        #$response = Invoke-RestMethod -Method Patch -ContentType application/json-patch+json  -Body $updateJSONBody -Uri $Uri -Headers $header
                         
                         Write-Host ("Test case updated successfully")           
                     }
