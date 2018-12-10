@@ -24,7 +24,7 @@ namespace Testautomationproj1
         [TestProperty("TestcaseID", "1072")]
         [TestCategory(TestHelpers.TestCategories.ApplicationVersion.V0403)]
         [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
-        [TestCategory(TestHelpers.TestCategories.TestRun.Smoke)]
+        [TestCategory(TestHelpers.TestCategories.TestRun.Weekly)]
         public void TestMethod1()
         {
             ChromeOptions option = new ChromeOptions();
@@ -46,7 +46,7 @@ namespace Testautomationproj1
         /// New Summary description for 
         /// TestMethod2
         ///     This is the method that is doing testing for 
-        ///     test method02 - modified 01
+        ///     test method02 - modified 06
         /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "1073")]
