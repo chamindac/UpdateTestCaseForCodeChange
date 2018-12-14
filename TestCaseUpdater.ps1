@@ -13,7 +13,7 @@ $User=""
 $base64AuthInfo = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes(("{0}:{1}" -f $User,$pat)));
 $header = @{Authorization=("Basic {0}" -f $base64AuthInfo)};
 
-
+Write-Host ("Test assembly path: " + $folderPath)
 $testAssemblies = (Get-ChildItem -Path $folderPath -Recurse -Filter $testAssemblyFilter).FullName
 
 foreach($testAssembly in $testAssemblies)
@@ -183,7 +183,7 @@ foreach($testAssembly in $testAssemblies)
                 }
                 else
                 {
-                    Write-Warning ("Test Method: " + $method.Name + " has not been defined with Test Property Attribute TestcaseID")
+                    Write-Host ("##vso[task.logissue type=warning;]Test Method: " + $method.Name + " has not been defined with Test Property Attribute TestcaseID")
                 }
             }
             Write-Host ("==================================================================")
