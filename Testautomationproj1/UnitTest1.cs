@@ -68,5 +68,31 @@ namespace Testautomationproj1
             Assert.AreEqual(true, wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.TitleContains("Selenium - Google Search")));
             driver.Dispose();
         }
+        
+         /// <summary>
+        /// New Summary description for 
+        /// TestMethod3
+        ///     This is the method that is doing testing for 
+        ///     test method03
+        /// </summary>
+        [TestMethod]
+        [TestCategory(TestHelpers.TestCategories.TestRun.Daily)]
+        [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
+        public void TestMethod3()
+        {
+            ChromeOptions option = new ChromeOptions();
+            option.AddArgument("--start-maximized");
+            IWebDriver driver = new ChromeDriver(option);
+            WebDriverWait wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            driver.Navigate().GoToUrl("https://www.google.lk/");
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.Name("q")));
+            IWebElement textField = driver.FindElement(By.Name("q"));
+            textField.SendKeys("Selenium");
+            wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.ElementToBeClickable(By.CssSelector("input[value='Google Search']")));
+            IWebElement searchButton = driver.FindElement(By.CssSelector("input[value='Google Search']"));
+            searchButton.Click();
+            Assert.AreEqual(true, wait.Until(SeleniumExtras.WaitHelpers.ExpectedConditions.TitleContains("Selenium - Google Search")));
+            driver.Dispose();
+        }
     }
 }
