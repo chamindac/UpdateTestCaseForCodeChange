@@ -76,7 +76,6 @@ namespace Testautomationproj1
         ///     test method03
         /// </summary>
         [TestMethod]
-        [TestProperty("TestcaseID", "1074")]
         [TestCategory(TestHelpers.TestCategories.TestRun.Daily)]
         [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
         public void TestMethod3()
