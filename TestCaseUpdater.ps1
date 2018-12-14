@@ -72,7 +72,7 @@ foreach($testAssembly in $testAssemblies)
                        Write-Host ("Found Test Case Summary: " + $testCaseSummary + ". Processing...")
                       
                         $testCaseSummary = ($testCaseSummary.Trim() -replace "`r","</br>" -replace "`n","</br>").Trim()
-                        if ($testcaseDescription.Trim() -ne $testCaseSummary)
+                        if ((([System.String]::IsNullOrEmpty($testcaseDescription)) -and (-not ([System.String]::IsNullOrEmpty($testCaseSummary)))) -or ($testcaseDescription.Trim() -ne $testCaseSummary))
                         {
                             $testcaseDescription = $testCaseSummary;
                             $needUpdateToSummary= $true;
