@@ -75,7 +75,8 @@ namespace Testautomationproj1
         ///     This is the method that is doing testing for 
         ///     test method03
         /// </summary>
-        [TestMethod]
+        [TestMethod]        
+        [TestProperty("TestcaseID", "1076")]
         [TestCategory(TestHelpers.TestCategories.TestRun.Daily)]
         [TestCategory(TestHelpers.TestCategories.TestStatus.Active)]
         public void TestMethod3()
