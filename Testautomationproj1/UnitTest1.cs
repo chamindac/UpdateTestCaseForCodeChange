@@ -17,8 +17,16 @@ namespace Testautomationproj1
         /// <summary>
         /// Summary description for 
         /// TestMethod1
+        /// <para>
         ///     This method is doing important work
         ///     for test method 01
+        ///     </para>
+        ///This Text is in the middle.
+        ///<para>
+        ///Another para text
+        ///bla bla
+        ///</para>
+        ///This text at end
         /// </summary>
         [TestMethod]
         [TestProperty("TestcaseID", "1072")]
@@ -48,6 +56,15 @@ namespace Testautomationproj1
         ///     This is the method that is doing testing for 
         ///     test method02 - modified 06
         /// </summary>
+        /// <remarks>
+        /// Sample List
+        /// <list type="bullet">
+        /// <item>
+        ///  List item 1
+        /// </item>
+        ///<item><description>List Item 2</description></item>
+        /// </list>
+        /// </remarks>
         [TestMethod]
         [TestProperty("TestcaseID", "1073")]
         [TestCategory(TestHelpers.TestCategories.TestRun.Daily)]

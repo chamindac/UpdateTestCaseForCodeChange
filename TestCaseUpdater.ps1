@@ -16,6 +16,16 @@ $header = @{Authorization=("Basic {0}" -f $base64AuthInfo)};
 Write-Host ("Test assembly path: " + $folderPath)
 $testAssemblies = (Get-ChildItem -Path $folderPath -Recurse -Filter $testAssemblyFilter).FullName
 
+function FormatSummary([string] $summaryText)
+{
+    $summaryText = ($summaryText.Trim() -replace '<para.',"<p>" -replace '</para>","</p>' `
+                                        -replace '<list type="bullet">','<ul>' -replace '</list>','</ul>' `
+                                        -replace '<item>','<li>' -replace '</item>','</li>' `
+                                        -replace '<description>','' -replace '</description>','' `
+                                        -replace '`r','</br>' -replace '`n','</br>').Trim()
+    $summaryText
+}
+
 foreach($testAssembly in $testAssemblies)
 {
     Write-Host ("******************************************************************")
@@ -67,11 +77,33 @@ foreach($testAssembly in $testAssemblies)
                     # Find the summary descriptions from docs
                     if ($assemblyDocument.doc.members.ChildNodes.Name.Contains(('M:' + $method.DeclaringType.FullName + "." + $method.Name)))
                     {
-                       $testCaseSummary = $assemblyDocument.doc.members.ChildNodes.Where({$_.Name -eq ('M:' + $method.DeclaringType.FullName + "." + $method.Name)}).Summary
+                       $testMethodBlock = $assemblyDocument.doc.members.ChildNodes.Where({$_.Name -eq ('M:' + $method.DeclaringType.FullName + "." + $method.Name)})
+                       $testCaseSummary = $testMethodBlock.summary
+                       
+
+                       if($testCaseSummary.GetType().Name -eq 'XmlElement')
+                       {
+                            $testCaseSummary = $testCaseSummary.InnerXML;
+                            $testCaseSummary = FormatSummary -summaryText $testCaseSummary
+
+                       }
+
+                       $testCaseRemarks = $testMethodBlock.remarks
+
+                       if(($testCaseRemarks -ne $null) -and ($testCaseRemarks.GetType().Name -eq 'XmlElement'))
+                       {
+                            $testCaseRemarks = $testCaseRemarks.InnerXML;
+                            $testCaseRemarks = FormatSummary -summaryText $testCaseRemarks
+
+                       }
+
+                       if (($testCaseRemarks -ne $null) -and ($testCaseRemarks.Length -gt 0))
+                       {
+                            $testCaseSummary = $testCaseSummary + '</br></br><strong>Remarks</strong></br>' + $testCaseRemarks
+                       }
 
                        Write-Host ("Found Test Case Summary: " + $testCaseSummary + ". Processing...")
                       
-                        $testCaseSummary = ($testCaseSummary.Trim() -replace "`r","</br>" -replace "`n","</br>").Trim()
                         if ((([System.String]::IsNullOrEmpty($testcaseDescription)) -and (-not ([System.String]::IsNullOrEmpty($testCaseSummary)))) -or ($testcaseDescription.Trim() -ne $testCaseSummary))
                         {
                             $testcaseDescription = $testCaseSummary;
