@@ -18,7 +18,7 @@ $testAssemblies = (Get-ChildItem -Path $folderPath -Recurse -Filter $testAssembl
 
 function FormatSummary([string] $summaryText)
 {
-    $summaryText = ($summaryText.Trim() -replace '<para.',"<p>" -replace '</para>","</p>' `
+    $summaryText = ($summaryText.Trim() -replace '<para>','<p>' -replace '</para>','</p>' `
                                         -replace '<list type="bullet">','<ul>' -replace '</list>','</ul>' `
                                         -replace '<item>','<li>' -replace '</item>','</li>' `
                                         -replace '<description>','' -replace '</description>','' `
